@@ -75,3 +75,13 @@ const { data, pending, error } = await useFetch<User>('/api/user', {
 3. 禁止原生 HTML，使用 Vuetify 元件
 4. 使用 Path Alias，不用相對路徑
 5. 禁止使用 `any` 型別
+
+## 頁面 vs 元件
+
+此模板適用於**可重用元件 (Components)**。
+
+開發**頁面 (Pages)** 時，請參考 [templates/page-patterns.md](page-patterns.md) 的頁面設計模板，其中定義了四種標準頁面類型：
+- **DataTable 頁面** — 列表數據 + CRUD
+- **設定表單頁** — 多卡片獨立儲存
+- **個人資料/詳情頁** — key-value 展示
+- **內容列表頁** — 卡片列表 + 無限捲動

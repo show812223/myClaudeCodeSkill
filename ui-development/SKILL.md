@@ -119,6 +119,63 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<關鍵字>" --stack vue
 
 詳細流程參考 [guides/playwright-mcp.md](guides/playwright-mcp.md)
 
+## 頁面設計規範
+
+開發新頁面時，必須根據頁面類型選用對應的設計模板。完整模板參考 [templates/page-patterns.md](templates/page-patterns.md)
+
+### 頁面類型選擇
+
+| 頁面類型 | 判斷標準 | 模板 |
+|---------|---------|------|
+| DataTable 頁面 | 主要展示列表數據 + CRUD 操作 | [page-patterns.md#datatable](templates/page-patterns.md#datatable) |
+| 設定表單頁 | 多個設定區塊，各有獨立儲存 | [page-patterns.md#settings-form](templates/page-patterns.md#settings-form) |
+| 個人資料/詳情頁 | 顯示資訊的 key-value 配對 | [page-patterns.md#profile-detail](templates/page-patterns.md#profile-detail) |
+| 內容列表頁 | 卡片式內容列表 + 篩選/無限捲動 | [page-patterns.md#content-list](templates/page-patterns.md#content-list) |
+
+### 共用 UI 元件
+
+| 元件 | 用途 | 必選 Props |
+|------|------|-----------|
+| `UIDataTable` | 資料表格頁面容器 | `:paging-tool`, `:headers`, `:items`, `:loading` |
+| `UIDialog` | 彈窗（CRUD 操作） | `v-model`, `:type`, `@confirm` |
+| `UITooltipBtn` | 帶 tooltip 的按鈕 | `:tooltip`, `icon` |
+| `UITime` | 時間格式化 | `:time` |
+| `UINoData` | 空狀態展示 | `:loading` |
+| `UIUserSelectorDialog` | 使用者選擇器 | `:userList`, `:title` |
+| `SearchTextField` | 搜尋輸入框 | `v-model` |
+
+### 頁面標題規範
+
+所有頁面標題必須包含 **MDI 圖示 + i18n 文字**：
+
+| 頁面類型 | 標題位置 |
+|---------|---------|
+| DataTable 頁面 | `#title` slot：`<v-icon start>` + `{{ t("title") }}` |
+| 設定表單頁 | `<v-card-title class="pa-0">`：`<v-icon>` + `{{ t("title") }}` |
+| 個人資料頁 | 各卡片 `<v-card-title>`：`<v-icon left>` + `{{ t("title") }}` |
+| 內容列表頁 | Header 卡片內 `<h1>` 標題 |
+
+### i18n 規範
+
+- 每個頁面必須包含 `<i18n lang="json">` 區塊
+- 必須同時支援 `zh-TW` 和 `en`（或 `en-US`）
+- 所有使用者可見文字必須使用 `t("key")` 引用
+- Dialog 通用訊息使用全域 key：`t("dialog.add_successfully")` 等
+
+### Script Setup 標準結構
+
+```
+1. definePageMeta({ layout: "default-menu-item-permission-check" })
+2. imports (DialogType, SBDataTableHeader, Service Class)
+3. Service: const service = reactive(new XxxService())
+4. 工具: useI18n(), useNuxtApp().$toast, useRoute(), useRouter()
+5. Loading 狀態: const isLoading = ref(false)
+6. Dialog 狀態: reactive objects
+7. Headers / computed
+8. Lifecycle: onMounted → loadData()
+9. Methods: loadData, dialog operations, CRUD
+```
+
 ## 核心規範
 
 ### Service Class 架構
@@ -254,6 +311,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<關鍵字>" --stack vue
 
 ## 相關檔案
 
+- [templates/page-patterns.md](templates/page-patterns.md) - **頁面設計模板（DataTable / 設定表單 / 詳情頁 / 內容列表）**
 - [templates/service-class.md](templates/service-class.md) - Service Class 完整模板
 - [templates/vue-component.md](templates/vue-component.md) - Vue 元件完整模板
 - [guides/playwright-mcp.md](guides/playwright-mcp.md) - Playwright MCP 測試指南
