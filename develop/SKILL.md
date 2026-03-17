@@ -1,23 +1,42 @@
 ---
 name: develop
-description: 完整功能開發流水線。一鍵觸發：設計 → 實作 → 測試 → 審查。使用此技能當被要求開發新功能、新增頁面、建立元件時。
+description: 功能開發與 Bug 修復流水線。一鍵觸發完整開發或快速修復。使用此技能當被要求開發新功能、新增頁面、建立元件、修 bug、解決問題、修復錯誤時。
 ---
 
-# 功能開發流水線
+# 功能開發與修復流水線
 
-此技能觸發完整的功能開發自動化流水線。每個階段由專屬 agent 串行執行，確保檔案不會被同時編輯。
+此技能支援兩種模式：
+- **開發模式**（預設）：完整的功能開發自動化流水線
+- **修復模式**（`--fix`）：快速 Bug 修復，跳過設計與審查階段
 
 ## 使用方式
 
 ```
-/develop [需求描述]
+/develop [需求描述]           # 完整開發流水線（6 phases）
+/develop --fix [bug描述]      # 快速修復模式（4 phases）
 ```
 
 範例：
 ```
+# 開發模式
 /develop 在 syncobox-task 中新增任務看板頁面，需要拖拽排序功能
 /develop 建立使用者管理頁面，包含 CRUD 和搜尋功能
+
+# 修復模式
+/develop --fix 登入頁面點擊登入後無反應，可能是 AuthService 的問題
+/develop --fix ViewerWithTools 的工具列按鈕在切換模型後消失
+/develop --fix syncobox-task 的任務列表分頁不正確
 ```
+
+## 模式判斷
+
+解析 `$ARGUMENTS`：
+- 包含 `--fix` → **修復模式**（跳到「修復模式」區塊）
+- 不含 `--fix` → **開發模式**（完整 6 phases）
+
+---
+
+# 開發模式（完整流水線）
 
 ## 流水線步驟（嚴格串行）
 
@@ -58,6 +77,8 @@ description: 完整功能開發流水線。一鍵觸發：設計 → 實作 → 
 - 撰寫 Service Class 的單元測試（100% 覆蓋率目標）
 - 撰寫 E2E 測試（主要使用者流程）
 
+> 測試規範參考 `/test` skill（unit + e2e）
+
 **完成條件**：`pnpm test` 通過，覆蓋率達標
 
 ### Phase 4：程式碼審查（code-reviewer agent）
@@ -67,6 +88,8 @@ description: 完整功能開發流水線。一鍵觸發：設計 → 實作 → 
 - 執行 `git diff` 查看變更
 - 對照規範交叉檢查
 - 輸出審查報告
+
+> 審查標準參考 `/review` skill
 
 **完成條件**：輸出分類標記的審查報告
 
@@ -83,6 +106,49 @@ description: 完整功能開發流水線。一鍵觸發：設計 → 實作 → 
 1. 執行 `pnpm lint` — 確認無 lint 錯誤
 2. 執行 `pnpm test` — 確認所有測試通過
 3. 輸出完成摘要，列出所有新建/修改的檔案
+
+---
+
+# 修復模式（--fix，快速 Bug 修復）
+
+跳過 UI 設計和程式碼審查階段，直接進入診斷與修復。
+
+### Phase 1-fix：診斷（主對話）
+
+1. 分析 `$ARGUMENTS` 中的 bug 描述（移除 `--fix` 後的部分）
+2. 搜尋相關檔案和程式碼（Grep/Glob）
+3. 定位可能的問題來源
+4. 確認修復策略
+
+### Phase 2-fix：修復（frontend-dev agent）
+
+委派給 `frontend-dev` agent，提供：
+- Bug 描述和複現步驟
+- 定位到的問題檔案和行號
+- 建議的修復方向
+
+**frontend-dev 負責**：
+- 修復程式碼邏輯
+- 確保修復不引入新問題
+- 執行 `pnpm lint` 驗證
+
+**完成條件**：bug 已修復，`pnpm lint` 通過
+
+### Phase 3-fix：回歸測試（test-engineer agent）
+
+等待 Phase 2-fix 完成後，委派給 `test-engineer` agent：
+- 為修復的 bug 新增回歸測試案例
+- 確保既有測試仍通過
+
+**完成條件**：`pnpm test` 通過，新增回歸測試
+
+### Phase 4-fix：最終驗證（主對話）
+
+1. 執行 `pnpm lint`
+2. 執行 `pnpm test`
+3. 輸出修復摘要
+
+---
 
 ## 檔案衝突防護
 

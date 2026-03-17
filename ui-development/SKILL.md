@@ -25,11 +25,11 @@ description: 建立 Vue 3 + Vuetify 3 元件與頁面。使用此技能當被要
 
 | M3 元件 | Vuetify 元件 | 使用場景 |
 |---------|--------------|----------|
-| Filled Button | `<v-btn variant="flat">` | 主要操作 |
-| Outlined Button | `<v-btn variant="outlined">` | 次要操作 |
+| Filled Button | `<v-btn variant="elevated">` | 主要操作（見 v-btn 樣式規則） |
+| Tonal Button | `<v-btn variant="tonal">` | 次要操作 |
 | Text Button | `<v-btn variant="text">` | 低強調操作 |
 | FAB | `<v-btn icon>` + `position="fixed"` | 頁面主要動作 |
-| Card | `<v-card>` | 內容容器 |
+| Card | `<v-card>` | 內容容器（見 v-card 樣式規則） |
 | Dialog | `<v-dialog>` | 模態互動 |
 | Snackbar | `<v-snackbar>` | 簡短通知 |
 | Navigation Drawer | `<v-navigation-drawer>` | 側邊導航 |
@@ -151,8 +151,8 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<關鍵字>" --stack vue
 | 頁面類型 | 標題位置 |
 |---------|---------|
 | DataTable 頁面 | `#title` slot：`<v-icon start>` + `{{ t("title") }}` |
-| 設定表單頁 | `<v-card-title class="pa-0">`：`<v-icon>` + `{{ t("title") }}` |
-| 個人資料頁 | 各卡片 `<v-card-title>`：`<v-icon left>` + `{{ t("title") }}` |
+| 設定表單頁 | `<v-card-title class="pa-0">`：`<v-icon start>` + `{{ t("title") }}` |
+| 個人資料頁 | 各卡片 `<v-card-title class="border-b">`：`<v-icon start>` + `{{ t("title") }}` |
 | 內容列表頁 | Header 卡片內 `<h1>` 標題 |
 
 ### i18n 規範
@@ -177,6 +177,107 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<關鍵字>" --stack vue
 ```
 
 ## 核心規範
+
+### v-card 樣式規則
+
+#### Variant 規則（依場景區分）
+
+| 場景 | variant | 備註 |
+|------|---------|------|
+| 主要內容卡片（DataTable、設定表單、詳情頁） | `flat` | 一般容器用途 |
+| Header / Hero 區塊 | `tonal` + `color="primary"` | 頁面頂部標題、篩選區 |
+| 提示 / 警告卡片 | `tonal` + `color="info/warning/error"` | 資訊提示、警告通知 |
+| 統計 / 摘要卡片 | `tonal` + `color="primary"` | Dashboard KPI、數字摘要 |
+| 選中 / 結果卡片 | `tonal` | 被選中狀態、搜尋結果 |
+| 空狀態卡片 | `flat` + `color="transparent"` | 無資料提示 |
+| Dialog 內嵌套卡片 | `flat` | Dialog 內分組區塊 |
+
+**規律**：`flat` = 一般容器，`tonal` = 強調型（需要視覺突出的場景）
+
+#### 圓角
+
+統一使用 `rounded="lg"`
+
+#### Elevation
+
+不指定，使用 Vuetify 預設（隨 variant 而定）
+
+#### Padding
+
+使用 Vuetify 預設（v-card-text / v-card-actions 預設 padding），不額外覆寫
+
+#### Card 結構
+
+v-card-title 加 `border-b` class 取代獨立的 `<v-divider />`：
+
+```vue
+<v-card variant="flat" rounded="lg">
+  <v-card-title class="border-b">
+    <v-icon start>mdi-xxx</v-icon>
+    {{ t("title") }}
+  </v-card-title>
+  <v-card-text>
+    ...內容...
+  </v-card-text>
+</v-card>
+```
+
+#### Border 規則
+
+v-card 本身只有**嵌套卡片**才加 `class="border"`，用於區分層級：
+
+```vue
+<!-- 外層卡片：不加 border -->
+<v-card variant="flat" rounded="lg">
+  <v-card-title class="border-b">...</v-card-title>
+  <v-card-text>
+    <!-- 內嵌卡片：加 border 區分層級 -->
+    <v-card variant="flat" rounded="lg" class="border">
+      ...嵌套內容...
+    </v-card>
+  </v-card-text>
+</v-card>
+```
+
+一般獨立卡片（頁面頂層）不加 `border`。
+
+#### Card Title 樣式（依頁面類型）
+
+| 頁面類型 | v-card-title class | 說明 |
+|---------|-------------------|------|
+| 一般頁面（單一 card） | `border-b` | 底線分隔標題與內容 |
+| 設定頁面（多 card 並列） | `bg-secondary text-subtitle-1` | 背景色區分標題，不用 `border-b` |
+
+設定頁面範例：
+```vue
+<v-card variant="flat" rounded="lg">
+  <v-card-title class="bg-secondary text-subtitle-1">
+    <v-icon start>mdi-xxx</v-icon>
+    {{ t("sectionTitle") }}
+  </v-card-title>
+  <v-card-text>...</v-card-text>
+</v-card>
+```
+
+#### Title Icon
+
+統一使用 `start` prop：
+
+```vue
+<v-icon start>mdi-xxx</v-icon>
+```
+
+#### Card Actions 按鈕佈局
+
+全部靠右並排，使用 `v-spacer` 推至右側：
+
+```vue
+<v-card-actions>
+  <v-spacer />
+  <v-btn variant="tonal" color="secondary">{{ t("cancel") }}</v-btn>
+  <v-btn variant="elevated" color="primary">{{ t("confirm") }}</v-btn>
+</v-card-actions>
+```
 
 ### Service Class 架構
 
@@ -222,6 +323,97 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<關鍵字>" --stack vue
 | `<progress>` | `<v-progress-linear>` / `<v-progress-circular>` | 支援 indeterminate |
 | `<tooltip>` | `<v-tooltip>` | 支援 location, delay |
 | `<menu>` | `<v-menu>` | 支援 activator slot |
+
+### v-chip 使用規則
+
+#### 使用情境
+
+| 情境 | 說明 | 範例 |
+|------|------|------|
+| 狀態標籤 | 顯示項目狀態（啟用/停用、審核狀態等） | `<v-chip color="success">已啟用</v-chip>` |
+| 分類/標記 | 在資料旁顯示分類或特殊標記（主要、管理員等） | `<v-chip>{{ t("main") }}</v-chip>` |
+
+#### 預設樣式
+
+所有 chip 統一使用 `size="small"` + `variant="tonal"`：
+
+```vue
+<v-chip size="small" variant="tonal">
+  {{ label }}
+</v-chip>
+```
+
+#### 顏色規則
+
+**狀態標籤**使用語義色對應：
+
+| 狀態 | color |
+|------|-------|
+| 成功 / 已啟用 / 已完成 | `success` |
+| 警告 / 待處理 | `warning` |
+| 錯誤 / 已停用 | `error` |
+| 資訊 / 草稿 | `info` |
+| 進行中 | `primary` |
+
+**分類/標記**不指定顏色，使用 Vuetify 預設。
+
+#### 注意事項
+
+- 內容列表頁的 `v-chip-group` + `filter` 篩選模式屬於該頁面類型的特定模式，不屬於通用 chip 規則
+- 禁止用 chip 做按鈕操作，按鈕一律用 `v-btn`
+
+### v-btn 樣式規則
+
+#### Variant 與 Color 對應
+
+| 操作層級 | variant | color | 範例場景 |
+|---------|---------|-------|---------|
+| 主要操作 | `elevated` | `primary` | 新增、儲存、確認、送出 |
+| 次要操作 | `tonal` | `secondary` | 取消、篩選、導航、關閉 |
+| 低強調操作 | `text` | 不指定 | 重置、更多、輔助連結 |
+| 危險操作 | `elevated` | `error` | 刪除、移除、停用 |
+
+```vue
+<!-- 主要操作 -->
+<v-btn variant="elevated" color="primary" prepend-icon="mdi-plus">
+  {{ t("add") }}
+</v-btn>
+
+<!-- 次要操作 -->
+<v-btn variant="tonal" color="secondary">
+  {{ t("cancel") }}
+</v-btn>
+
+<!-- 危險操作 -->
+<v-btn variant="elevated" color="error" prepend-icon="mdi-delete">
+  {{ t("delete") }}
+</v-btn>
+```
+
+#### Size
+
+不強制指定，使用 Vuetify 預設大小。特定場景（如表格內操作按鈕、空間較小的區域）可用 `size="small"`。
+
+#### 文字按鈕 Icon
+
+有文字 + 圖示的按鈕統一使用 `prepend-icon`（圖示在文字左側）。
+
+#### Icon 按鈕（純圖示、無文字）
+
+優先使用 `UITooltipBtn`，自帶 tooltip 說明，不指定 variant（使用元件預設）：
+
+```vue
+<UITooltipBtn
+  color="primary"
+  icon="mdi-pencil"
+  :tooltip="t('edit')"
+  @click="edit(item)"
+/>
+```
+
+#### Rounded
+
+不指定，使用 Vuetify 預設圓角。
 
 ### Vuetify Class 優先規則
 

@@ -13,8 +13,8 @@ description: 自動修正 code review 問題並補齊測試。使用此技能當
 2. **修正 TypeScript 錯誤** - 補齊型別定義、移除 `any`
 3. **執行 Lint Fix** - 自動修正程式碼風格
 4. **移除 Console.log** - 移除除錯用的 console
-5. **產生單元測試** - 依據 unit-test skill 產生測試
-6. **產生 E2E 測試** - 依據 e2e-test skill 補齊測試
+5. **產生單元測試** - 依據 `/test unit` skill 產生測試
+6. **產生 E2E 測試** - 依據 `/test e2e` skill 補齊測試
 7. **驗證結果** - 執行測試確認通過
 
 ## 自動修正項目

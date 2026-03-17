@@ -60,6 +60,9 @@ description: 程式碼重構流水線。一鍵觸發：審查 → 重構 → 測
 - 為新拆分的方法補充測試
 - 確保覆蓋率不下降
 
+> 測試規範參考 `/test` skill（unit + e2e）
+> 審查標準參考 `/review` skill
+
 **完成條件**：`pnpm test` 全部通過
 
 ### Phase 4：最終驗證（主對話）

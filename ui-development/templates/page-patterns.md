@@ -83,6 +83,7 @@
     <!-- 主要操作 -->
     <template #appendTitle>
       <v-btn
+        variant="elevated"
         color="primary"
         prepend-icon="mdi-plus"
         @click="addDialog.isOpen = true"
@@ -107,8 +108,8 @@
       <v-chip
         v-if="item.isMain"
         size="small"
-        class="text-caption ml-1"
-        color="primary"
+        variant="tonal"
+        class="ml-1"
       >
         {{ t("main") }}
       </v-chip>
@@ -386,8 +387,8 @@ async function deleteItem() {
 <template #item.actions="{ item }">
   <div class="d-flex justify-end">
     <v-btn
+      variant="elevated"
       color="primary"
-      variant="flat"
       size="small"
       prepend-icon="mdi-cog"
       class="mr-2"
@@ -396,8 +397,8 @@ async function deleteItem() {
       {{ t("editRoles") }}
     </v-btn>
     <v-btn
+      variant="elevated"
       color="error"
-      variant="flat"
       size="small"
       prepend-icon="mdi-delete"
       @click="removeDialogOpen(item)"
@@ -488,12 +489,11 @@ async function deleteItem() {
 <v-skeleton-loader v-if="isLoading">       → 載入骨架屏
 <div class="mx-auto d-flex flex-column ga-2" style="max-width: 800px">
   ├── <v-card-title class="pa-0">          → 頁面主標題（Icon + 文字）
-  ├── <v-card>                             → 設定區塊
-  │   ├── <v-card-title>                   → 區塊標題（Icon + 文字）
-  │   ├── <v-divider>
+  ├── <v-card variant="flat" rounded="lg">  → 設定區塊
+  │   ├── <v-card-title class="border-b">  → 區塊標題（Icon + 文字）
   │   ├── <v-card-text>                    → 表單欄位
   │   └── <v-card-actions>                 → 儲存按鈕（靠右）
-  └── <v-card>                             → 其他設定區塊...
+  └── <v-card variant="flat" rounded="lg"> → 其他設定區塊...
 ```
 
 ### 完整範例
@@ -534,17 +534,16 @@ async function deleteItem() {
   >
     <!-- 頁面主標題 -->
     <v-card-title class="pa-0">
-      <v-icon>mdi-cog-outline</v-icon>
+      <v-icon start>mdi-cog-outline</v-icon>
       {{ t("basicSetting") }}
     </v-card-title>
 
     <!-- 設定區塊 1：專案名稱 -->
-    <v-card>
-      <v-card-title>
-        <v-icon size="24">mdi-file-document-outline</v-icon>
+    <v-card variant="flat" rounded="lg">
+      <v-card-title class="bg-secondary text-subtitle-1">
+        <v-icon start>mdi-file-document-outline</v-icon>
         {{ t("projectSetting") }}
       </v-card-title>
-      <v-divider />
       <v-card-text class="pb-0">
         <v-text-field
           v-model="service.formData.projectName"
@@ -558,7 +557,7 @@ async function deleteItem() {
       <v-card-actions>
         <v-spacer />
         <v-btn
-          variant="flat"
+          variant="elevated"
           color="primary"
           :loading="isLoadingSection1"
           :disabled="!isSection1Valid"
@@ -570,12 +569,11 @@ async function deleteItem() {
     </v-card>
 
     <!-- 設定區塊 2：文件設定（條件顯示） -->
-    <v-card v-if="hasDocModule">
-      <v-card-title>
-        <v-icon size="24">mdi-file-outline</v-icon>
+    <v-card v-if="hasDocModule" variant="flat" rounded="lg">
+      <v-card-title class="bg-secondary text-subtitle-1">
+        <v-icon start>mdi-file-outline</v-icon>
         {{ t("documents") }}
       </v-card-title>
-      <v-divider />
       <v-card-text class="py-0">
         <v-checkbox
           v-model="service.formData.isVectorMode"
@@ -586,7 +584,7 @@ async function deleteItem() {
       <v-card-actions>
         <v-spacer />
         <v-btn
-          variant="flat"
+          variant="elevated"
           color="primary"
           :loading="isLoadingSection2"
           @click="saveSection2"
@@ -666,9 +664,9 @@ onMounted(async () => {
 |------|------|
 | 最大寬度 | `max-width: 800px` + `mx-auto` |
 | 區塊間距 | 父容器 `d-flex flex-column ga-2` |
-| 區塊標題 | `<v-icon size="24">` + 文字 |
-| 區塊分隔 | 標題後必須有 `<v-divider>` |
-| 儲存按鈕 | `<v-card-actions>` 內靠右，`variant="flat" color="primary"` |
+| Card 屬性 | `variant="flat" rounded="lg"` |
+| 區塊標題 | `<v-card-title class="bg-secondary text-subtitle-1">` + `<v-icon start>` + 文字 |
+| 儲存按鈕 | `<v-card-actions>` 內靠右，`variant="elevated" color="primary"` |
 | 載入態 | 初始載入用 `<v-skeleton-loader type="card,card,card">`，各區塊獨立 loading |
 | 條件區塊 | 用 `v-if` 根據模組權限控制顯示 |
 
@@ -684,12 +682,11 @@ onMounted(async () => {
 <v-container fluid class="pa-0">
   <v-row no-gutters>
     <v-col cols="12" md="10" lg="9" xl="6" class="mx-auto">
-      ├── <v-card>                        → 資訊卡片
-      │   ├── <v-card-title>              → 區塊標題（Icon + 文字）
-      │   ├── <v-divider>
+      ├── <v-card variant="flat" rounded="lg">  → 資訊卡片
+      │   ├── <v-card-title class="border-b">  → 區塊標題（Icon + 文字）
       │   └── <v-card-text>
-      │       └── <v-row>/<v-col>         → key-value 配對
-      ├── <v-card> (class="mt-4")         → 其他卡片...
+      │       └── <v-row>/<v-col>              → key-value 配對
+      ├── <v-card variant="flat" rounded="lg" class="mt-4"> → 其他卡片...
 ```
 
 ### 完整範例
@@ -731,12 +728,11 @@ onMounted(async () => {
     <!-- 基本資料卡片 -->
     <v-row no-gutters>
       <v-col cols="12" md="10" lg="9" xl="6" class="mx-auto">
-        <v-card>
-          <v-card-title>
-            <v-icon left>mdi-account-outline</v-icon>
+        <v-card variant="flat" rounded="lg">
+          <v-card-title class="border-b">
+            <v-icon start>mdi-account-outline</v-icon>
             {{ t("userInfo") }}
           </v-card-title>
-          <v-divider />
           <v-card-text>
             <v-skeleton-loader
               v-if="!userInfo"
@@ -791,12 +787,11 @@ onMounted(async () => {
     <!-- 偏好設定卡片 -->
     <v-row no-gutters class="mt-4">
       <v-col cols="12" md="10" lg="9" xl="6" class="mx-auto">
-        <v-card>
-          <v-card-title>
-            <v-icon left>mdi-cog-outline</v-icon>
+        <v-card variant="flat" rounded="lg">
+          <v-card-title class="border-b">
+            <v-icon start>mdi-cog-outline</v-icon>
             {{ t("preference") }}
           </v-card-title>
-          <v-divider />
           <v-card-text>
             <v-container>
               <v-row class="align-center">
@@ -887,6 +882,8 @@ async function changeTimeFormat(value: boolean) {
 | 慣例 | 說明 |
 |------|------|
 | 響應式寬度 | `cols="12" md="10" lg="9" xl="6"` + `mx-auto` |
+| Card 屬性 | `variant="flat" rounded="lg"` |
+| 區塊標題 | `<v-card-title class="border-b">` + `<v-icon start>` + 文字 |
 | key-value 比例 | label `cols="4"` + value `cols="8"`（或 `3:9`） |
 | 卡片間距 | 後續卡片加 `class="mt-4"` |
 | 載入態 | `<v-skeleton-loader type="paragraph@3">` |
@@ -992,8 +989,8 @@ async function changeTimeFormat(value: boolean) {
             >
               <v-btn
                 prepend-icon="mdi-filter-variant"
-                color="primary"
                 variant="tonal"
+                color="secondary"
                 class="px-4"
                 @click="filterDialog.isOpen = true"
               >
@@ -1053,6 +1050,7 @@ async function changeTimeFormat(value: boolean) {
         class="text-center py-12 px-8 mx-auto"
         variant="flat"
         color="transparent"
+        rounded="lg"
         max-width="500"
       >
         <v-card-text>
@@ -1070,8 +1068,7 @@ async function changeTimeFormat(value: boolean) {
           </p>
           <v-btn
             v-if="hasActiveFilters"
-            variant="outlined"
-            color="primary"
+            variant="text"
             prepend-icon="mdi-filter-off"
             @click="resetFilters"
           >
@@ -1159,7 +1156,7 @@ onMounted(async () => {
 |------|------|
 | 容器定位 | `position-absolute` + `overflow: auto` + `inset: 0` |
 | 最大寬度 | `max-width: 900px` + `mx-auto` |
-| Header 卡片 | `v-card variant="tonal" color="primary"` 彩色背景 |
+| Header 卡片 | `v-card variant="tonal" color="primary" rounded="lg"` 彩色背景 |
 | 快速篩選 | `v-chip-group` + `mandatory` + `filter` |
 | 無限捲動 | `v-infinite-scroll` + `@load` callback 搭配 `done()` |
 | 空狀態 | 區分「無資料」與「篩選無結果」，後者顯示重置按鈕 |
@@ -1232,6 +1229,37 @@ const dialog = reactive<{
 | 頁面類型 | 標題位置 | Icon 用法 |
 |---------|---------|----------|
 | DataTable | `#title` slot | `<v-icon start>` |
-| 設定表單 | `<v-card-title class="pa-0">` | `<v-icon>` |
-| 個人資料 | 各卡片 `<v-card-title>` | `<v-icon left>` |
+| 設定表單 | `<v-card-title class="pa-0">` | `<v-icon start>` |
+| 個人資料 | 各卡片 `<v-card-title class="border-b">` | `<v-icon start>` |
 | 內容列表 | Header 卡片內 `<h1>` | 不使用 Icon，用文字標題 |
+
+### Card Actions 佈局
+
+Dialog 或卡片底部的操作列，靠右對齊，取消在左、確認在右：
+
+```vue
+<v-card-actions>
+  <v-spacer />
+  <v-btn
+    variant="tonal"
+    color="secondary"
+    @click="dialog.isOpen = false"
+  >
+    {{ t("cancel") }}
+  </v-btn>
+  <v-btn
+    variant="elevated"
+    color="primary"
+    @click="confirm"
+  >
+    {{ t("confirm") }}
+  </v-btn>
+</v-card-actions>
+```
+
+| 按鈕類型 | variant | color | size |
+|---------|---------|-------|------|
+| 主要動作（新增、儲存、確認） | `elevated` | `primary` | `small` |
+| 次要動作（取消、篩選） | `tonal` | `secondary` | `small` |
+| 低強調（重置） | `text` | — | `small` |
+| 危險動作（刪除、移除） | `elevated` | `error` | `small` |
